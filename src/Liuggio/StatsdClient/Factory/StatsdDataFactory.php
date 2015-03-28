@@ -10,6 +10,8 @@ class StatsdDataFactory implements StatsdDataFactoryInterface
      * @var StatsdDataInterface
      */
     private $entityClass;
+    private $prefix;
+    private $suffix;
 
     public function __construct($entity_class = '\Liuggio\StatsdClient\Entity\StatsdData')
     {
@@ -72,7 +74,7 @@ class StatsdDataFactory implements StatsdDataFactoryInterface
         $statsdData = $this->produceStatsdDataEntity();
 
         if (null !== $key) {
-            $statsdData->setKey($key);
+            $statsdData->setKey($statsdData->getRealKey($key));
         }
 
         if (null !== $value) {
@@ -126,5 +128,60 @@ class StatsdDataFactory implements StatsdDataFactoryInterface
     public function getEntityClass()
     {
         return $this->entityClass;
+    }
+    
+    /**
+     * Set key prefix
+     * 
+     * @param string $prefix
+     */
+    public function setPrefix($prefix)
+    {
+    	$this->prefix = $prefix;
+    }
+    
+    /**
+     * Set key suffix
+     * 
+     * @param string $suffix
+     */
+    public function setSuffix($suffix)
+    {
+    	$this->suffix = $suffix;
+    }
+    
+    /**
+     * Get key prefix 
+     * 
+     * @return string
+     */
+    public function getPrefix()
+    {
+    	return $this->prefix;
+    }
+    
+    /**
+     * Get key suffix
+     * 
+     * @return string
+     */
+    public function getSuffix()
+    {
+    	return $this->suffix;
+    }
+    
+    /**
+     * Get key with prefix/suffix
+     * 
+     * @param string $key
+     * 
+     * @return string
+     */
+    public function getRealKey($key)
+    {
+    	if(!is_null($key)) 
+    		return (null !== $this->getPrefix() ? $this->getPrefix() . '.' : '') . $key . (null !== $this->getSuffix() ? '.' . $this->getSuffix() : '');
+    	else
+    		return $key;
     }
 }
