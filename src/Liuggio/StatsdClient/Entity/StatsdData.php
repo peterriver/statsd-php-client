@@ -11,6 +11,8 @@ class StatsdData implements StatsdDataInterface
     private $value;
     private $metric;
     private $sampleRate = 1;
+    private $prefix;
+    private $suffix;
 
     /**
      * @param string $key
@@ -98,5 +100,60 @@ class StatsdData implements StatsdDataInterface
     public function __toString()
     {
         return $this->getMessage();
+    }
+    
+    /**
+     * Set key prefix
+     *
+     * @param string $prefix
+     */
+    public function setPrefix($prefix)
+    {
+    	$this->prefix = $prefix;
+    }
+    
+    /**
+     * Set key suffix
+     *
+     * @param string $suffix
+     */
+    public function setSuffix($suffix)
+    {
+    	$this->suffix = $suffix;
+    }
+    
+    /**
+     * Get key prefix
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+    	return $this->prefix;
+    }
+    
+    /**
+     * Get key suffix
+     *
+     * @return string
+     */
+    public function getSuffix()
+    {
+    	return $this->suffix;
+    }
+    
+    /**
+     * Get key with prefix/suffix
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public function getRealKey($key)
+    {
+    	if(!is_null($key))
+    		return (null !== $this->getPrefix() ? $this->getPrefix() . '.' : '') . $key . (null !== $this->getSuffix() ? '.' . $this->getSuffix() : '');
+    	else
+    		return $key;
     }
 }

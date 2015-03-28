@@ -82,7 +82,7 @@ class StatsDService implements StatsdDataFactoryInterface
     public function timing($key, $time)
     {
         $this->appendToBuffer(
-            $this->factory->timing($key, $time)
+            $this->factory->timing($this->getRealKey($key), $time)
         );
 
         return $this;
@@ -94,7 +94,7 @@ class StatsDService implements StatsdDataFactoryInterface
     public function gauge($key, $value)
     {
         $this->appendToBuffer(
-            $this->factory->gauge($key, $value)
+            $this->factory->gauge($this->getRealKey($key), $value)
         );
 
         return $this;
@@ -106,7 +106,7 @@ class StatsDService implements StatsdDataFactoryInterface
     public function set($key, $value)
     {
         $this->appendToBuffer(
-            $this->factory->set($key, $value)
+            $this->factory->set($this->getRealKey($key), $value)
         );
 
         return $this;
@@ -118,7 +118,7 @@ class StatsDService implements StatsdDataFactoryInterface
     public function increment($key)
     {
         $this->appendToBuffer(
-            $this->factory->increment($key)
+            $this->factory->increment($this->getRealKey($key))
         );
 
         return $this;
@@ -130,7 +130,7 @@ class StatsDService implements StatsdDataFactoryInterface
     public function decrement($key)
     {
         $this->appendToBuffer(
-            $this->factory->decrement($key)
+            $this->factory->decrement($this->getRealKey($key))
         );
 
         return $this;
@@ -142,7 +142,7 @@ class StatsDService implements StatsdDataFactoryInterface
     public function updateCount($key, $delta)
     {
         $this->appendToBuffer(
-            $this->factory->updateCount($key, $delta)
+            $this->factory->updateCount($this->getRealKey($key), $delta)
         );
 
         return $this;
@@ -188,5 +188,60 @@ class StatsDService implements StatsdDataFactoryInterface
         $this->buffer = array();
 
         return $this;
+    }
+    
+    /**
+     * Set key prefix
+     *
+     * @param string $prefix
+     */
+    public function setPrefix($prefix)
+    {
+    	$this->prefix = $prefix;
+    }
+    
+    /**
+     * Set key suffix
+     *
+     * @param string $suffix
+     */
+    public function setSuffix($suffix)
+    {
+    	$this->suffix = $suffix;
+    }
+    
+    /**
+     * Get key prefix
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+    	return $this->prefix;
+    }
+    
+    /**
+     * Get key suffix
+     *
+     * @return string
+     */
+    public function getSuffix()
+    {
+    	return $this->suffix;
+    }
+    
+    /**
+     * Get key with prefix/suffix
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public function getRealKey($key)
+    {
+    	if(!is_null($key))
+    		return (null !== $this->getPrefix() ? $this->getPrefix() . '.' : '') . $key . (null !== $this->getSuffix() ? '.' . $this->getSuffix() : '');
+    	else
+    		return $key;
     }
 }
